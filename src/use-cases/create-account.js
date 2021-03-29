@@ -1,15 +1,23 @@
-const builder = require('../domains/business-errors')();
+module.exports = ({ accountGateway, account }) => {
+  
+  const execute = ({ balance }, callback) => {        
 
-module.exports = () => {
-  const execute = (balance, responseHandler) => {
+    const save = (newAccount) => {
+      accountGateway.save({ account: newAccount }, (error, data) => {
+        if (error.messages) {
+          callback(error = { isApplicationError: true, messages: [ 'Application could not create the account.' ] }, data = {});
+        }        
+      });
+    };
+
+    account.createAccount({ balance }, (error, newAccount) => {
+      if (error.messages) {
+        callback(error, data = {});
+      }
     
-    console.log(builder.builder().build());
-
-    if (balance <= 0.0) {
-      // responseHandler(builder().INSUFFICIENT_BALANCE().build(), undefined);
-    }
-
-    //TODO save account
+      save(newAccount);
+      callback(errors = [ ], data = newAccount);
+    });      
   };
 
   return {
