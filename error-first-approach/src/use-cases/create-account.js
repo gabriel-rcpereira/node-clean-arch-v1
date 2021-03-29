@@ -3,7 +3,7 @@ module.exports = ({ accountGateway, account }) => {
   const execute = ({ balance }, callback) => {        
 
     const save = (newAccount) => {
-      accountGateway.save({ account: newAccount }, (error, data) => {
+      accountGateway.save(newAccount, (error, data) => {
         if (error.messages) {
           callback(error = { isApplicationError: true, messages: [ 'Application could not create the account.' ] }, data = {});
         }        
@@ -17,7 +17,7 @@ module.exports = ({ accountGateway, account }) => {
     
       save(newAccount);
       callback(errors = [ ], data = newAccount);
-    });      
+    });
   };
 
   return {
