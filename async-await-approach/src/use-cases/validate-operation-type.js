@@ -2,18 +2,16 @@ module.exports = () => {
 
   const isOperationInvalid = (operationType) => {
     return (
-      (!operationType) ||
-      (operationType !== 'DEBIT' &&
-      operationType !== 'CREDIT')
+      (!operationType) 
+      || (operationType !== 'DEBIT' 
+        && operationType !== 'CREDIT')
     );
   };
 
-  const execute = (operationType, callback) => {
+  const execute = (operationType) => {
     if (isOperationInvalid(operationType)) {
-      return callback({ messages: [ `The '${operationType}' operation type is invalid.` ] }, {});
+      throw { messages: [ `The operation type '${operationType}' is invalid.` ] };
     }
-
-    return callback({}, {});
   };
 
   return {

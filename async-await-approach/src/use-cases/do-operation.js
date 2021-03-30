@@ -1,45 +1,25 @@
 module.exports = ({ accountGateway, accountDomain, validateOperationType }) => {
 
-  const update = (updatedAccount, callback) => {
-    accountGateway.update(updatedAccount, (error) => {
-      if (error.messages) {
-        return callback({ messages: error.messages }, {});
-      }
-      
-      return callback({}, {});
-    });
+  const update = async (updatedAccount) => {
+    return await accountGateway.updateAsync(updatedAccount);
   };
 
-  const executeOperationByType = ({ account, operation }, callback) => {
+  const executeOperationByType = ({ account, operation }) => {    
     const operationStrategyToExecute = accountDomain[operation.operationType.toLowerCase()];
-
-    operationStrategyToExecute({ account, value: operation.value }, (error, updatedAccount) => {
-      if (error.messages) {
-        return callback({ messages: error.messages }, {});
-      }
-      
-      return update(updatedAccount, callback);
-    });
+    return operationStrategyToExecute({ account, value: operation.value });
   };
   
-  const execute = (operation, callback) => {
-    accountGateway.findById(operation.id, (error, foundAccount) => {
-      if (error.messages) {
-        return callback({ isApplicationError: true, messages: [ 'The operation could not be performed.' ] }, {});
-      }
+  const execute = async (operation) => {
+    const foundAccount = await accountGateway.findByIdAsync(operation.id);
 
-      if (!foundAccount.id) {
-        return callback({ isResourceNotFound: true, messages: [ 'Account was not found.' ] }, {});
-      }
-          
-      validateOperationType.execute(operation.operationType, (error) => {
-        if (error.messages) {
-          return callback(error, {});
-        }
+    if (!foundAccount) {
+      throw { isResourceNotFound: true, messages: [ 'Resource was not found.' ] };
+    }
 
-        return executeOperationByType({ account: foundAccount, operation }, callback);
-      });
-    });
+    validateOperationType.execute(operation.operationType);
+    
+    const accountAfterOperation = executeOperationByType({ account: foundAccount, operation });
+    return await update(accountAfterOperation);    
   };
 
   return {

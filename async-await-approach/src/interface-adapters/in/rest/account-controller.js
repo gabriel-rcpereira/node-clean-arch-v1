@@ -1,39 +1,36 @@
 module.exports = ({ server, createAccount, doOperation, validateOperationTypeMiddleware }) => {
 
-  const postCreateAccount = (req, res) => {
+  const postCreateAccount = async (req, res) => {
     const { balance } = req.body;
     
-    createAccount.execute({ balance }, (error, data) => {      
-      if (!error.messages) {
-        return res.status(201).send({ id: data.id });
-      }
-
-      const statusError = error.isApplicationError ? 500 : 422;
-      
-      return res.status(statusError).json({ errors: error.messages });
-    });
+    try {
+      const createdAccount = await createAccount.execute({ balance });
+      return res.status(201).send({ id: createdAccount.id });
+    } catch (error) {
+      return res.status(422).json({ errors: error.messages });
+    }
   };
 
-  const putDoOperation = (req, res) => {
+  const putDoOperation = async (req, res) => {
     const { id } = req.params;
     const { operationType, value } = req.body;
     const operation = { id, operationType, value };
+    try {
+      await doOperation.execute(operation);
+      return res.status(204).send();
+    } catch (error) {
+      const { isApplicationError, isResourceNotFound, messages } = error;
 
-    doOperation.execute(operation, (error, data) => {
-      if (!error.messages) {
-        return res.status(204).send();
-      }
-
-      if (error.isApplicationError) {
+      if (isApplicationError) {
         return res.status(500).json({ errors: error.messages });  
       }
 
-      if (error.isResourceNotFound) {
-        return res.status(404).json({ errors: error.messages });  
+      if (isResourceNotFound) {
+        return res.status(404).send({ errors: messages });
       }
-      
-      return res.status(422).json({ errors: error.messages });
-    });
+
+      return res.status(422).send({ errors: messages });
+    }
   };
 
   return {

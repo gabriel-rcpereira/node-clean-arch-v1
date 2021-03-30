@@ -10,7 +10,7 @@ module.exports = () => {
 
   const execute = (operationType, callback) => {
     if (isOperationInvalid(operationType)) {
-      return callback({ messages: [ `The '${operationType}' operation type is invalid.` ] }, {});
+      return callback({ messages: [ `The operation type '${operationType}' is invalid.` ] }, {});
     }
 
     return callback({}, {});

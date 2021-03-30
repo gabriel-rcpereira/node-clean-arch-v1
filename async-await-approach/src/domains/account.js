@@ -1,26 +1,24 @@
 module.exports = () => {
-  const createAccount = ({ balance }, callback) => {
+  const createAccount = ({ balance }) => {
     if (balance <= 0.0) {
-      return callback({ messages: [ 'Insuficient balance to create an account.' ] }, {});
+      throw { messages: ['Insuficient balance to create an account.'] };
     }
 
-    return callback({}, { balance });
+    return { balance };
   };
 
-  const debit = ({ account, value }, callback) => {
+  const debit = ({ account, value }) => {
     if (account.balance == 0.0 || account.balance < value) {
-      return callback({ messages: [ 'Operation denied. Insuficient balance.' ] }, {});
+      throw { messages: ['Operation denied. Insuficient balance.'] };
     }
 
     const balanceAfterOperation = account.balance - value;
-    const updatedAccount = { ...account, balance: balanceAfterOperation.toFixed(2) };
-    return callback({}, updatedAccount);
+    return { ...account, balance: balanceAfterOperation.toFixed(2) };    
   };
 
-  const credit = ({ account, value }, callback) => {    
+  const credit = ({ account, value }) => {    
     const balanceAfterOperation = account.balance + value;
-    const updatedAccount = { ...account, balance: balanceAfterOperation.toFixed(2) };
-    return callback({}, updatedAccount);
+    return { ...account, balance: balanceAfterOperation.toFixed(2) };
   };
 
   return {
