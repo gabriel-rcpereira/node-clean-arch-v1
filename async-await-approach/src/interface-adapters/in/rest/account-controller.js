@@ -19,11 +19,7 @@ module.exports = ({ server, createAccount, doOperation, validateOperationTypeMid
       await doOperation.execute(operation);
       return res.status(204).send();
     } catch (error) {
-      const { isApplicationError, isResourceNotFound, messages } = error;
-
-      if (isApplicationError) {
-        return res.status(500).json({ errors: error.messages });  
-      }
+      const { isResourceNotFound, messages } = error;
 
       if (isResourceNotFound) {
         return res.status(404).send({ errors: messages });
