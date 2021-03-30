@@ -18,7 +18,7 @@ module.exports = ({ accountGateway, accountDomain, validateOperationType }) => {
         return callback({ messages: error.messages }, {});
       }
       
-      update(updatedAccount, callback);
+      return update(updatedAccount, callback);
     });
   };
   
@@ -37,7 +37,7 @@ module.exports = ({ accountGateway, accountDomain, validateOperationType }) => {
           return callback(error, {});
         }
 
-        executeOperationByType({ account: foundAccount, operation }, callback);
+        return executeOperationByType({ account: foundAccount, operation }, callback);
       });
     });
   };
