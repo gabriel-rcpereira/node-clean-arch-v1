@@ -1,4 +1,4 @@
-module.exports = ({ server, createAccount, doOperation }) => {
+module.exports = ({ server, createAccount, doOperation, validateOperationTypeMiddleware }) => {
 
   const postCreateAccount = (req, res) => {
     const { balance } = req.body;
@@ -21,7 +21,7 @@ module.exports = ({ server, createAccount, doOperation }) => {
 
     doOperation.execute(operation, (error, data) => {
       if (!error.messages) {
-        return res.status(200).send();
+        return res.status(204).send();
       }
 
       if (error.isApplicationError) {
@@ -39,7 +39,7 @@ module.exports = ({ server, createAccount, doOperation }) => {
   return {
     map: () => {
       server.post('/api/v1/accounts', postCreateAccount);
-      server.put('/api/v1/accounts/:id', putDoOperation);
+      server.put('/api/v1/accounts/:id', validateOperationTypeMiddleware, putDoOperation);
     }
   };
 }

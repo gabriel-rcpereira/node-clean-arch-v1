@@ -1,48 +1,44 @@
-module.exports = ({ accountGateway, account }) => {
+module.exports = ({ accountGateway, accountDomain, validateOperationType }) => {
 
-  const execute = (operation, callback) => {
-    accountGateway.findById(operation.id, (error, data) => {
+  const update = (updatedAccount, callback) => {
+    accountGateway.update(updatedAccount, (error) => {
       if (error.messages) {
-        return callback(error = { isApplicationError: true, messages: [ 'The operation could not be performed.' ] }, data = {});
-      }
-
-      if (!data.id) {
-        return callback(error = { isResourceNotFound: true, messages: [ 'Account was not found.' ] }, data = {});
+        return callback({ messages: error.messages }, {});
       }
       
-      if (operation.operationType === 'DEBIT') {        
-        account.debit({ account: data, value: operation.value }, (error, data) => {
-          if (error.messages) {
-            return callback(error = { messages: error.messages }, data = {});            
-          }
-          
-          accountGateway.update(data, (error, data) => {
-            if (error.messages) {
-              return callback(error = { messages: error.messages }, data = {});
-            }
-          });
+      return callback({}, {});
+    });
+  };
 
-          return callback(error = {}, data = {});
-        });
-      } else if (operation.operationType === 'CREDIT') {        
-        account.credit({ account: data, value: operation.value }, (error, data) => {
-          if (error.messages) {
-            return callback(error = { messages: error.messages }, data = {});            
-          }
-          
-          accountGateway.update(data, (error, data) => {
-            if (error.messages) {
-              return callback(error = { messages: error.messages }, data = {});
-            }
-          });
+  const executeOperationByType = ({ account, operation }, callback) => {
+    const operationStrategyToExecute = accountDomain[operation.operationType.toLowerCase()];
 
-          return callback(error = {}, data = {});
-        });
-      } else {
-        return callback(error = { messages: [ `The '${operation.operationType}' operation type is invalid.` ] }, data = {});
+    operationStrategyToExecute({ account, value: operation.value }, (error, updatedAccount) => {
+      if (error.messages) {
+        return callback({ messages: error.messages }, {});
+      }
+      
+      update(updatedAccount, callback);
+    });
+  };
+  
+  const execute = (operation, callback) => {
+    accountGateway.findById(operation.id, (error, foundAccount) => {
+      if (error.messages) {
+        return callback({ isApplicationError: true, messages: [ 'The operation could not be performed.' ] }, {});
       }
 
+      if (!foundAccount.id) {
+        return callback({ isResourceNotFound: true, messages: [ 'Account was not found.' ] }, {});
+      }
+          
+      validateOperationType.execute(operation.operationType, (error) => {
+        if (error.messages) {
+          return callback(error, {});
+        }
 
+        executeOperationByType({ account: foundAccount, operation }, callback);
+      });
     });
   };
 

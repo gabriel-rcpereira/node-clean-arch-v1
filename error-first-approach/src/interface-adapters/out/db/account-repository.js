@@ -4,10 +4,10 @@ module.exports = ({ AccountEntity }) => {
     const createdAccount = new AccountEntity(account);
     createdAccount.save((error, data) => {
       if (error) {
-        return callback(error = { messages: [ error ]}, data = { });
+        return callback({ messages: [ error ]}, { });
       }
 
-      return callback(error = { }, data = { id: data._id, balance: data.balance });
+      return callback({ }, { id: data._id, balance: data.balance });
     });    
   };
 
@@ -16,28 +16,28 @@ module.exports = ({ AccountEntity }) => {
       if (error) {
         console.error('[repository]', 'finding account by id.', error);
         
-        return callback(error = { messages: [ error ] }, data = {});
+        return callback({ messages: [ error ] }, {});
       }
             
       if (data) {
         const foundAccount = { id: data._id, balance: data.balance, __v: data.__v };
-        return callback(error = { }, data = foundAccount);
+        return callback({}, foundAccount);
       }
 
-      return callback(error = {}, data = {});
+      return callback({}, {});
     });
   };
 
   const update = (account, callback) => {
-    const accountFilter = { _id: account.id, __v: account.__v };
+    const filter = { _id: account.id, __v: account.__v };
     const accountToUpdate = { balance: account.balance };
 
-    AccountEntity.findOneAndUpdate(accountFilter, accountToUpdate, (error, data) => {
+    AccountEntity.findOneAndUpdate(filter, accountToUpdate, (error, data) => {
       if (error) {
-        return callback(error = { messages: [ error ] }, data = {});
+        return callback({ messages: [ error ] }, {});
       }
 
-      return callback(error = {}, data = {});
+      return callback({}, data);
     });
   };
 
