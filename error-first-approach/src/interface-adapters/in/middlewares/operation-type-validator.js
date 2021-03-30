@@ -10,7 +10,7 @@ module.exports = ({ validateOperationType }) => {
 
       next();
     });
-  }
+  };
 
   return {
     validateOperationTypeMiddleware
