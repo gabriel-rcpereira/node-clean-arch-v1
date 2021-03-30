@@ -4,15 +4,15 @@ const port = 3001;
 
 server.use(express.json());
 
-const account = require('./domains/account')();
+const accountDomain = require('./domains/account')();
 
 const { AccountEntity } = require('./infrastructure/db/mongo-db')();
 
 const accountGateway = require('./interface-adapters/out/db/account-repository')({ AccountEntity });
 
 const validateOperationType = require('./use-cases/validate-operation-type')();
-const createAccount = require('./use-cases/create-account')({ accountGateway, account });
-const doOperation = require('./use-cases/do-operation')({ accountGateway, accountDomain: account, validateOperationType });
+const createAccount = require('./use-cases/create-account')({ accountGateway, accountDomain });
+const doOperation = require('./use-cases/do-operation')({ accountGateway, accountDomain, validateOperationType });
 
 const { validateOperationTypeMiddleware } = require('./interface-adapters/in/rest/middlewares/operation-type-validator')({ validateOperationType });
 
