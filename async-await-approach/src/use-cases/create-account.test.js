@@ -2,6 +2,7 @@ const each = require('jest-each').default;
 
 const CreateAccount = require('./create-account');
 const accountDomain = require('../domains/account')();
+const BusinessError = require('../domains/errors/bussiness-error');
    
 describe('Create account Unit tests', () => {
 
@@ -63,7 +64,7 @@ describe('Create account Unit tests', () => {
     const callbackExecution = () => execute(account);
 
     //THEN
-    expect(callbackExecution()).rejects.toThrow();
+    expect(callbackExecution()).rejects.toThrow(BusinessError);
     
     expect(accountDomainSpy).toHaveBeenCalledTimes(1);
     expect(accountGateway.saveNewAsync).not.toHaveBeenCalled();
