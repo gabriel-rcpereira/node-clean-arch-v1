@@ -3,11 +3,8 @@ const BusinessError = require('../domains/errors/bussiness-error');
 module.exports = () => {
 
   const isOperationInvalid = (operationType) => {
-    return (
-      (!operationType) 
-      || (operationType !== 'DEBIT' 
-        && operationType !== 'CREDIT')
-    );
+    return (operationType !== 'DEBIT' 
+      && operationType !== 'CREDIT')
   };
 
   const execute = (operationType) => {
