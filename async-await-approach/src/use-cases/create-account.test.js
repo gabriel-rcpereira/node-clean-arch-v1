@@ -3,7 +3,7 @@ const each = require('jest-each').default;
 const CreateAccount = require('./create-account');
 const accountDomain = require('../domains/account')();
    
-describe('Create account with success', () => {
+describe('Create account Unit tests', () => {
 
   beforeEach(() => {
     jest.restoreAllMocks();
