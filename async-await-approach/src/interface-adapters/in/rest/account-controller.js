@@ -1,3 +1,5 @@
+const ResouceNotFoundError = require('../../../domains/errors/resource-not-found-error');
+
 module.exports = ({ server, createAccount, doOperation, validateOperationTypeMiddleware }) => {
 
   const postCreateAccount = async (req, res) => {
@@ -7,7 +9,8 @@ module.exports = ({ server, createAccount, doOperation, validateOperationTypeMid
       const createdAccount = await createAccount.execute({ balance });
       return res.status(201).send({ id: createdAccount.id });
     } catch (error) {
-      return res.status(422).json({ errors: error.messages });
+      const { message } = error;
+      return res.status(422).send({ errors: [ message ] });
     }
   };
 
@@ -19,13 +22,13 @@ module.exports = ({ server, createAccount, doOperation, validateOperationTypeMid
       await doOperation.execute(operation);
       return res.status(204).send();
     } catch (error) {
-      const { isResourceNotFound, messages } = error;
+      const { message } = error;
 
-      if (isResourceNotFound) {
-        return res.status(404).send({ errors: messages });
+      if (error instanceof ResouceNotFoundError) {
+        return res.status(404).send({ errors: [ message ] });
       }
 
-      return res.status(422).send({ errors: messages });
+      return res.status(422).send({ errors: [ message ] });
     }
   };
 

@@ -1,3 +1,5 @@
+const ResouceNotFoundError = require('../domains/errors/resource-not-found-error');
+
 module.exports = ({ accountGateway, accountDomain, validateOperationType }) => {
 
   const update = async (updatedAccount) => {
@@ -13,7 +15,7 @@ module.exports = ({ accountGateway, accountDomain, validateOperationType }) => {
     const foundAccount = await accountGateway.findByIdAsync(operation.id);
 
     if (!foundAccount) {
-      throw { isResourceNotFound: true, messages: [ 'Resource was not found.' ] };
+      throw new ResouceNotFoundError('Resource was not found.');
     }
 
     validateOperationType.execute(operation.operationType);

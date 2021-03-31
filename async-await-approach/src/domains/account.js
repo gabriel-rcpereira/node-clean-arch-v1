@@ -1,7 +1,9 @@
+const BusinessExceptionError = require('./errors/bussiness-error');
+
 module.exports = () => {
   const createAccount = ({ balance }) => {
     if (balance <= 0.0) {
-      throw { messages: ['Insuficient balance to create an account.'] };
+      throw new BusinessExceptionError('Insuficient balance to create an account.');
     }
 
     return { balance };
@@ -9,7 +11,7 @@ module.exports = () => {
 
   const debit = ({ account, value }) => {
     if (account.balance == 0.0 || account.balance < value) {
-      throw { messages: ['Operation denied. Insuficient balance.'] };
+      throw new BusinessExceptionError('Operation denied. Insuficient balance.');
     }
 
     const balanceAfterOperation = account.balance - value;

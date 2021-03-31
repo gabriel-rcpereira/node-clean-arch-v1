@@ -6,7 +6,7 @@ module.exports = ({ validateOperationType }) => {
     try {
       validateOperationType.execute(operationType);
     } catch (error) {
-      return res.status(400).send({ errors: error.messages });      
+      return res.status(400).send({ errors: [ error.message ] });
     }
     
     next();

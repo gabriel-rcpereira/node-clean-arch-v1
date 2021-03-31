@@ -1,3 +1,5 @@
+const BusinessError = require('../domains/errors/bussiness-error');
+
 module.exports = () => {
 
   const isOperationInvalid = (operationType) => {
@@ -10,7 +12,7 @@ module.exports = () => {
 
   const execute = (operationType) => {
     if (isOperationInvalid(operationType)) {
-      throw { messages: [ `The operation type '${operationType}' is invalid.` ] };
+      throw new BusinessError(`The operation type '${operationType}' is invalid.`);
     }
   };
 
