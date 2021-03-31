@@ -3,9 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "jest": {
+    "collectCoverageFrom": [
+      "**/src/**"
+    ]
+  },
   "scripts": {
     "start": "nodemon src/app.js",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "coverage": "jest --collectCoverage"
   },
   "author": "",
   "license": "ISC",
