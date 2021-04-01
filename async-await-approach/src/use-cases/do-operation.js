@@ -7,7 +7,7 @@ module.exports = ({ accountGateway, accountDomain, validateOperationType }) => {
   };
 
   const executeOperationByType = ({ account, operation }) => {    
-    const operationStrategyToExecute = accountDomain[operation.operationType.toLowerCase()];
+    const operationStrategyToExecute = accountDomain[operation.operationType.toLowerCase()];    
     return operationStrategyToExecute({ account, value: operation.value });
   };
   

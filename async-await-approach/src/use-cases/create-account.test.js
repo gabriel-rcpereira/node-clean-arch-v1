@@ -19,11 +19,11 @@ describe('Create account Unit tests', () => {
   `.test('Should create an account given balance greater than 0.0 and equal to $balance', async ({id, balance}) => {
     //GIVEN
     const accountDomainSpy = jest.spyOn(accountDomain, 'createAccount');
-    const accountGateway = {
+    const mockedAccountGateway = {
       saveNewAsync: jest.fn().mockImplementation((account) => Promise.resolve({ id, balance: account.balance }))
     };
   
-    const { execute } = CreateAccount({ accountGateway, accountDomain });
+    const { execute } = CreateAccount({ accountGateway: mockedAccountGateway, accountDomain });
   
     const account = { balance };
     
@@ -38,8 +38,8 @@ describe('Create account Unit tests', () => {
     expect(accountDomainSpy).toHaveBeenCalledTimes(1);
     expect(accountDomainSpy).toHaveBeenCalledWith({ balance });
   
-    expect(accountGateway.saveNewAsync).toHaveBeenCalledTimes(1);
-    expect(accountGateway.saveNewAsync).toHaveBeenCalledWith({ balance });
+    expect(mockedAccountGateway.saveNewAsync).toHaveBeenCalledTimes(1);
+    expect(mockedAccountGateway.saveNewAsync).toHaveBeenCalledWith({ balance });
   })  
 
   each`
@@ -52,11 +52,11 @@ describe('Create account Unit tests', () => {
   `.test('Should throw error and not create an account given balance less than 0.0 and equal to $balance', async ({ id, balance }) => {
     //GIVEN
     const accountDomainSpy = jest.spyOn(accountDomain, 'createAccount');
-    const accountGateway = {
+    const mockedAccountGateway = {
       saveNewAsync: jest.fn().mockImplementation((account) => Promise.resolve({ id, balance: account.balance }))
     };
 
-    const { execute } = CreateAccount({ accountGateway, accountDomain });
+    const { execute } = CreateAccount({ accountGateway: mockedAccountGateway, accountDomain });
 
     const account = { balance };
     
@@ -67,6 +67,6 @@ describe('Create account Unit tests', () => {
     expect(callbackExecution()).rejects.toThrow(BusinessError);
     
     expect(accountDomainSpy).toHaveBeenCalledTimes(1);
-    expect(accountGateway.saveNewAsync).not.toHaveBeenCalled();
+    expect(mockedAccountGateway.saveNewAsync).not.toHaveBeenCalled();
   })  
 })
