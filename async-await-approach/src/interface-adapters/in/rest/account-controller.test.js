@@ -1,4 +1,4 @@
-const { Server, Response, Request } = require('./test-helpers/helpers')();
+const { Server, Response, Request } = require('./__test-hooks__/rest-hook')();
 
 const BusinessError = require('../../../domains/errors/bussiness-error');
 const ResourceNotFoundError = require('../../../domains/errors/resource-not-found-error');
